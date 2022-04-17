@@ -23,12 +23,12 @@ GUI application for examining/injecting spatial media metadata in MP4/MOV files.
 import ntpath
 import os
 import sys
-import tkFileDialog
-import tkMessageBox
+import tkinter.filedialog as tkFileDialog
+import tkinter.messagebox as tkMessageBox
 import traceback
 
 try:
-    from Tkinter import *
+    from tkinter import *
 except ImportError:
     print("Tkinter library is not available.")
     exit(0)
@@ -97,16 +97,19 @@ class Application(Frame):
             self.var_spatial_audio.set(0)
 
         if metadata:
-            metadata = metadata.itervalues().next()
-
-            if metadata.get("Spherical", "") == "true":
+            metadata = next(iter(metadata.items()))
+            print(metadata)
+            if metadata[1]["Spherical"] == "true":
                 self.var_spherical.set(1)
             else:
                 self.var_spherical.set(0)
 
-            if metadata.get("StereoMode", "") == "top-bottom":
-                self.var_3d.set(1)
-            else:
+            try:
+                if metadata[1]["StereoMode"] == "top-bottom":
+                    self.var_3d.set(1)
+                else:
+                    self.var_3d.set(0)
+            except:
                 self.var_3d.set(0)
 
         if audio_metadata:
